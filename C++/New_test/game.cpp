@@ -1,9 +1,9 @@
-#include <iostream>     // 
-#include <conio.h>      // 
-#include <windows.h>    // 
-#include <string>       // 
-#include <vector>       // 
-#include <utility>      // 
+#include <iostream>     // cin, cout
+#include <conio.h>      // 使用者輸入
+#include <windows.h>    // 操作視窗: Sleep(), GetCurrentProcessId(), 用戶輸入: GetKeyState(), SetCursorPos()
+#include <string>       // string(不是容器)特殊化類別
+#include <vector>       // vector容器
+#include <utility>      // 用於pair(我有用到嗎???)
 
 using namespace std;
 using Maze = vector<vector<string>>;
