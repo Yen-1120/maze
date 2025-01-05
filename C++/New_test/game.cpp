@@ -27,10 +27,10 @@ vector <text>  opening = {
 
 vector <text>  chapter1 = {
     {"旁白：", "第一步，", ""}, {"旁白：第一步，", "使用方向鍵來移動。", ""},
-    {"旁白：", "簡單的開始，", ""}, {"旁白：簡單的開始，", "剩下的就交給你囉！", "使用方向鍵移動，走出這個迷宮："}
+    {"旁白：", "簡單的開始，", ""}, {"旁白：簡單的開始，", "剩下的就交給你囉！", "提示：使用方向鍵移動，走出這個迷宮。"}
 };
 vector <text>  chapter2 = {
-    
+    {"旁白：", "恭喜你通過第一關，", ""}, {"旁白：恭喜你通過第一關，", "讓我們增加難度吧！", "提示：走出困難的迷宮，祝你好運！"}
 };
 
 vector <text> story[2] = {
@@ -58,17 +58,9 @@ Maze maze[2] = {
         {1, 1},
         {
             {"牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆"},
-            {"牆", "　", "　", "　", "牆", "　", "　", "　", "　", "　", "　", "牆"},
-            {"牆", "牆", "牆", "　", "牆", "　", "牆", "牆", "牆", "牆", "　", "牆"},
-            {"牆", "　", "　", "　", "　", "　", "牆", "　", "　", "牆", "　", "牆"},
-            {"牆", "　", "牆", "牆", "牆", "　", "牆", "牆", "　", "牆", "　", "牆"},
-            {"牆", "　", "　", "　", "牆", "　", "　", "　", "　", "牆", "　", "牆"},
-            {"牆", "牆", "牆", "　", "牆", "牆", "牆", "牆", "　", "牆", "　", "牆"},
-            {"牆", "　", "　", "　", "　", "　", "　", "牆", "　", "牆", "　", "牆"},
-            {"牆", "　", "牆", "牆", "牆", "牆", "　", "牆", "　", "牆", "　", "牆"},
-            {"牆", "　", "　", "　", "　", "牆", "　", "　", "　", "牆", "門", "牆"},
-            {"牆", "牆", "牆", "牆", "　", "牆", "牆", "牆", "牆", "牆", "牆", "牆"},
-            {"牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆"}
+            {"牆", "　", "　", "牆", "牆", "牆", "　", "　", "　", "　", "　", "牆"},
+            {"牆", "牆", "　", "　", "　", "　", "　", "牆", "牆", "牆", "門", "牆"},
+            {"牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆"},
         }
     },
     // 第二關迷宮
@@ -92,17 +84,17 @@ Maze maze[2] = {
 };
 
 // 設置
-void HideCursor();                          // 隱藏光標，增加流暢度(只用一次而已，之後沒用了)
+void HideCursor();                                      // 隱藏光標，增加流暢度(只用一次而已，之後沒用了)
 
 // 展示資訊
-void ToLevel();             // 展示當前章節
-void read(vector <text> content);           // 讀文本，展示劇情(使用say)
+void ToLevel();                                         // 展示當前章節
+void read(vector <text> content);                       // 讀文本，展示劇情(使用say，其實就只是一句句說出來而已......)
 void say(string speaker, string sentence, string tip);  // 幫助劇情展示，或是單純用來顯示文字
-void DrawMaze(int chapter, int show);        // 顯示、更新操作後的地圖
+void DrawMaze(int chapter, int show);                   // 顯示、更新操作後的地圖
 
 // 處理玩家移動
-void CheckInput();                          // 遊戲核心(使用者互動) ———— 偵測玩家按了什麼
-void MovePlayer(short dx, short dy);        // 若玩家按下方向鍵，處理玩家的移動，以及和各種物件的互動
+void CheckInput();                                      // 遊戲核心(使用者互動) ———— 偵測玩家按了什麼
+void MovePlayer(short dx, short dy);                    // 若玩家按下方向鍵，處理玩家的移動，以及和各種物件的互動
 
 
 
@@ -145,10 +137,13 @@ void HideCursor()
 // 展示資訊
 void ToLevel()
 {
+    system("cls");
+
     // 好習慣，先給玩家位置再DrawMaze。
     player = maze[chapter].PlayerStart;
     DrawMaze(chapter-1, 1);
 
+    Sleep(2000);
     // 展示地圖
     read(story[chapter-1]);
 
@@ -199,13 +194,13 @@ void read(vector <text> content)
 {
     for (int i = 0; i < content.size(); i++)
     {
-        say(content[i].speaker, content[i].sentence, content[i].tip); // 說出內容
+        say(content[i].speaker, content[i].sentence, content[i].tip); // 顯示對話, 提示
     }
 
     return;
 }
 
-void say(string speaker, string sentence, string tip) // 顯示對話, 提示
+void say(string speaker, string sentence, string tip)
 {
     // 角色說出台詞
     coord = {0, 1};
@@ -269,7 +264,7 @@ void MovePlayer(short dx, short dy)
         return;
     }
 
-    // 檢查是否到達終點
+    // 檢查是否到達"門"
     if (maze[chapter].terrain[newY][newX] == "門") {
         player.x = newX;
         player.y = newY;
