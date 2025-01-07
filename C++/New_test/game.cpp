@@ -4,7 +4,6 @@
 #include <string>       // string(不是容器)特殊化類別
 #include <vector>       // vector容器
 #include <utility>      // 用於pair(我有用到嗎???)
-#include "DoCollision.h"// 碰撞處理
 
 using namespace std;
 
@@ -21,21 +20,39 @@ struct text
     string tip;
 };
 vector <text>  opening = {
-    {"旁白：", "你好，", ""}, {"旁白：你好，", "歡迎來到這個世界。", ""},
-    {"旁白：", "讓我帶你一步步熟悉它吧！", ""}
+    {"旁白：", "？？？", ""},
+    {"旁白：", "又有人來挑戰了嗎？", ""},
+    {"旁白：", "希望你這次做好準備了......", ""},
+    {"旁白：", "準備再次敗在我製作的宇宙毀天滅地無敵超級霹靂最難迷宮下吧！", ""}
 };
 
+vector <text>  chapter0 = {
+    {"旁白：", "例行公事，", ""}, {"旁白：例行公事，", "我必須說明遊戲規則。", ""},
+    {"旁白：", "但是為什麼？", ""}, {"旁白：但是為什麼？", "誰說我一定要乖乖照做的？", ""}, {"旁白：但是為什麼？誰說我一定要乖乖照做的？", "我才不要！", ""},
+    {"旁白：", "祝你好運，", ""}, {"旁白：祝你好運，", "我先走啦！", ""},
+    {"", "　　　", ""},
+    {"？？？：", "......", ""},
+    {"？？？：", "別在意，", ""}, {"？？？：別在意，", "它不過是個情緒失控的機器而已。", ""},
+    {"？？？：", "我會給你提示的。", ""}, {"？？？：我會給你提示的。", "加油。", "提示：使用方向鍵移動，走出這個迷宮。"}
+};
 vector <text>  chapter1 = {
-    {"旁白：", "第一步，", ""}, {"旁白：第一步，", "使用方向鍵來移動。", ""},
-    {"旁白：", "簡單的開始，", ""}, {"旁白：簡單的開始，", "剩下的就交給你囉！", "提示：使用方向鍵移動，走出這個迷宮。"}
+    {"旁白：", "你竟然過了第一關？", ""}, {"旁白：你竟然過了第一關？", "看來我必須把迷宮變得更難！", ""},
+    {"旁白：", "......", ""}, {"旁白：", "......", ""}, {"旁白：", "......", ""},
+    {"旁白：", "好了，", ""}, {"旁白：好了，", "試試我用盡全力製作的最難迷宮吧！！！", ""},
+    {"？？？：", "......", ""},
+    {"？？？：......", "　　　", ""},
+    {"？？？：", "雖然還是一樣簡單......", ""},
+    {"？？？：", "但還是小心一點吧。", "提示：小心，它可能動了什麼手腳。"},
 };
 vector <text>  chapter2 = {
-    {"旁白：", "恭喜你通過第一關，", ""}, {"旁白：恭喜你通過第一關，", "讓我們增加難度吧！", "提示：走出困難的迷宮，祝你好運！"}
+    {"旁白：", "......", ""}, {"旁白：......", "　　　", ""},
+    {"旁白：", "......", ""},
 };
 
-vector <text> story[2] = {
+vector <text> story[3] = {
+    chapter0,
     chapter1,
-    chapter2
+    chapter2,
 };
 int chapter;
 
@@ -44,6 +61,7 @@ struct item
 {
     int x;
     int y;
+    int face;   // 上右下左 0123 (順時針)
 };
 item player;
 
@@ -52,7 +70,7 @@ struct Maze {
     item PlayerStart;               // 每一關的玩家出生點
     vector<vector<string>> terrain; // 每一關的地形
 };
-Maze maze[2] = {
+Maze maze[3] = {
     // 第一關迷宮
     {
         {1, 1},
@@ -67,34 +85,46 @@ Maze maze[2] = {
     {
         {1, 1},
         {
-            {"牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆"},
-            {"牆", "　", "　", "　", "牆", "　", "　", "　", "　", "　", "　", "牆"},
-            {"牆", "牆", "牆", "　", "牆", "　", "牆", "牆", "牆", "牆", "　", "牆"},
-            {"牆", "　", "　", "　", "　", "　", "牆", "　", "　", "牆", "　", "牆"},
-            {"牆", "　", "牆", "牆", "牆", "　", "牆", "牆", "　", "牆", "　", "牆"},
-            {"牆", "　", "　", "　", "牆", "　", "　", "　", "　", "牆", "　", "牆"},
-            {"牆", "牆", "牆", "　", "牆", "牆", "牆", "牆", "　", "牆", "　", "牆"},
-            {"牆", "　", "　", "　", "　", "　", "　", "牆", "　", "牆", "　", "牆"},
-            {"牆", "　", "牆", "牆", "牆", "牆", "　", "牆", "　", "牆", "　", "牆"},
-            {"牆", "　", "　", "　", "　", "牆", "　", "　", "　", "牆", "門", "牆"},
-            {"牆", "牆", "牆", "牆", "　", "牆", "牆", "牆", "牆", "牆", "牆", "牆"},
-            {"牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆"}
+            {"牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆"},
+            {"牆", "　", "牆", "　", "　", "　", "　", "牆"},
+            {"牆", "　", "牆", "　", "牆", "牆", "　", "牆"},
+            {"牆", "　", "　", "　", "牆", "　", "　", "牆"},
+            {"牆", "　", "牆", "牆", "牆", "　", "牆", "牆"},
+            {"牆", "　", "　", "　", "牆", "　", "門", "牆"},
+            {"牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆"}
+        }
+    },
+    // 第三關迷宮
+    {
+        {2, 5},
+        {
+            {"牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆"},
+            {"牆", "　", "　", "　", "　", "　", "　", "牆", "牆"},
+            {"牆", "　", "牆", "牆", "牆", "牆", "牆", "牆", "牆"},
+            {"牆", "　", "牆", "牆", "牆", "牆", "　", "　", "牆"},
+            {"牆", "　", "牆", "牆", "牆", "牆", "牆", "　", "牆"},
+            {"牆", "牆", "　", "牆", "牆", "門", "牆", "　", "牆"},
+            {"牆", "　", "　", "牆", "牆", "牆", "牆", "　", "牆"},
+            {"牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆", "牆"},
         }
     }
 };
 
 // 設置
 void HideCursor();                                      // 隱藏光標，增加流暢度(只用一次而已，之後沒用了)
+void setConsoleColor(int color);                        // 變更文字顏色
 
 // 展示資訊
 void ToLevel();                                         // 展示當前章節
+    // 迷宮部分
+void DrawMaze(int chapter, int show);                   // 顯示、更新操作後的地圖
+    // 劇情部分
 void read(vector <text> content);                       // 讀文本，展示劇情(使用say，其實就只是一句句說出來而已......)
 void say(string speaker, string sentence, string tip);  // 幫助劇情展示，或是單純用來顯示文字
-void DrawMaze(int chapter, int show);                   // 顯示、更新操作後的地圖
 
 // 處理玩家移動
 void CheckInput();                                      // 遊戲核心(使用者互動) ———— 偵測玩家按了什麼
-void MovePlayer(short dx, short dy);                    // 若玩家按下方向鍵，處理玩家的移動，以及和各種物件的互動
+void walk(short dx, short dy);                          // 若玩家按下方向鍵，處理玩家的移動，以及和各種物件的互動
 
 
 
@@ -104,10 +134,11 @@ int main()
 {
     system("cls");
     HideCursor();
+    setConsoleColor(7);
 
     read(opening);
 
-    chapter = 1;
+    chapter = 0;
     ToLevel();
 
     while (rungame)
@@ -133,6 +164,24 @@ void HideCursor()
 
     return;
 }
+void setConsoleColor(int color) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+
+    return;
+    /*
+    黑色	0
+    藍色	1
+    綠色	2
+    青色	3
+    紅色	4
+    紫色	5
+    黃色	6
+    白色	7
+    */
+}
+
+
 
 // 展示資訊
 void ToLevel()
@@ -141,18 +190,15 @@ void ToLevel()
 
     // 好習慣，先給玩家位置再DrawMaze。
     player = maze[chapter].PlayerStart;
-    DrawMaze(chapter-1, 1);
+    DrawMaze(chapter, 1);
 
     Sleep(2000);
-    // 展示地圖
-    read(story[chapter-1]);
 
-    // 固定顯示當前提示, 資訊(因為read完就會消失，需要一個穩定的資訊欄)
-
+    read(story[chapter]);
 
     return;
 }
-
+    // 迷宮部分
 void DrawMaze(int chapter, int way)
 {
     // 設定光標位置
@@ -163,10 +209,39 @@ void DrawMaze(int chapter, int way)
     {
         for (int j = 0; j < maze[chapter].terrain[i].size(); j++)
         {
-            if (i == player.y && j == player.x)
+            if (i == player.y && j == player.x)             // "我"
             {
-                cout << "我";
-            } else {
+                if (chapter < 2)        // 0, 1
+                {
+                    setConsoleColor(4);
+                    cout << "我";
+                } 
+                else                    // 2, 3
+                {
+                    setConsoleColor(1);
+                    cout << "我";
+                }
+                setConsoleColor(7);
+            }
+            else if (maze[chapter].terrain[i][j] == "門")   // "門"
+            {
+                if (chapter < 1)        // 0
+                {
+                    setConsoleColor(4);
+                    cout << "門";
+                } 
+                else if (chapter < 3)   // 1, 2
+                {
+                    setConsoleColor(1);
+                    cout << "門";
+                }
+                else                    // 3
+                {
+                    setConsoleColor(6);
+                    cout << "門";
+                }
+                setConsoleColor(7);
+            } else {                                        // 其他
                 switch (way)
                 {
                     case 0:
@@ -190,6 +265,7 @@ void DrawMaze(int chapter, int way)
     return;
 }
 
+    // 劇情部分
 void read(vector <text> content)
 {
     for (int i = 0; i < content.size(); i++)
@@ -199,7 +275,6 @@ void read(vector <text> content)
 
     return;
 }
-
 void say(string speaker, string sentence, string tip)
 {
     // 角色說出台詞
@@ -216,6 +291,7 @@ void say(string speaker, string sentence, string tip)
     Sleep(1000);
     cout << "\r" << string(speaker.length() + sentence.length(), ' ') << "\r"; // 清除該行內容
 
+
     // 顯示顯示提示
     coord = {0, 0};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
@@ -225,23 +301,36 @@ void say(string speaker, string sentence, string tip)
     return;
 }
 
+
+
 // 處理玩家移動
 void CheckInput()
 {
-    if (_kbhit()) {
+    if (_kbhit())
+    {
         int key = _getch();
         switch (key) {
-            case 72:  // 上
-                MovePlayer(0, -1);
+            case 72:    // 上
+                player.face = 0;
+                walk(0, -1);
                 break;
-            case 80:  // 下
-                MovePlayer(0, 1);
+            case 77:    // 右
+                player.face = 1;
+                walk(1, 0);
                 break;
-            case 75:  // 左
-                MovePlayer(-1, 0);
+            case 80:    // 下
+                player.face = 2;
+                walk(0, 1);
                 break;
-            case 77:  // 右
-                MovePlayer(1, 0);
+            case 75:    // 左
+                player.face = 3;
+                walk(-1, 0);
+                break;
+            case 122:   // s(小寫)閃現
+                if (chapter > 1)
+                {
+                    walk(1, 0);
+                }
                 break;
         }
     }
@@ -253,26 +342,32 @@ void CheckInput()
     //y
     //+
 }
-
-void MovePlayer(short dx, short dy)
+void walk(short dx, short dy)
 {
     short newX = player.x + dx;
     short newY = player.y + dy;
 
     // 檢查是否撞到牆
-    if (maze[chapter].terrain[newY][newX] == "牆") {
+    if (maze[chapter].terrain[newY][newX] == "牆")
+    {
         return;
     }
 
     // 檢查是否到達"門"
-    if (maze[chapter].terrain[newY][newX] == "門") {
+    if (maze[chapter].terrain[newY][newX] == "門")
+    {
         player.x = newX;
         player.y = newY;
         DrawMaze(chapter, 0);   // "我"取代門
         Sleep(1000);
 
-        DrawMaze(chapter-1, 2); // 清空舊地圖
+        DrawMaze(chapter, 2);   // 清空舊地圖
         chapter += 1;
+
+        Sleep(500);
+        system("cls");
+
+        Sleep(1000);
         ToLevel();              // 前往下一關, 畫地圖, 展示劇情
         return;
     }
